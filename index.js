@@ -1,5 +1,7 @@
 const inquirer = require("inquirer");
 
+
+
 const mainChoices = [
   "View All Employees",
   "Add Employee",
@@ -10,6 +12,7 @@ const mainChoices = [
   "Add Department",
   "Quit",
 ];
+
 
 const promptUser = () => {
   return inquirer.prompt([
@@ -22,4 +25,13 @@ const promptUser = () => {
   ]);
 };
 
+
+
 promptUser();
+
+if (mainChoices === 'View All Departments') {
+    viewDepartments();
+  }
+
+
+
