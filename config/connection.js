@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const util = require('util'); // To use promisify
+
 
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -8,23 +8,17 @@ const connection = mysql.createConnection({
     database: process.env.DB_NAME
   });
 
+  const tables = ['Departments', 'Role', 'Employee'];
 
-async function viewDepartments() {
-    const query = util.promisify(connection.query).bind(connection);
-    try {
-      const departments = await query('SELECT * FROM Departments');
-
-      console.log('Departments:');
-      departments.forEach(department => {
-        console.log(`ID: ${department.id}, Name: ${department.name}`);
-      });
-  
-    } catch (error) {
-      console.error('Error fetching departments:', error);
-    } finally {
-      // Close the database connection
-      connection.end();
-    }
-  }
-
-  module.exports = viewDepartments;
+  // Loop through each table and execute a SELECT query
+  tables.forEach((table) => {
+    const query = `SELECT * FROM ${table}`;
+    connection.query(query, function (err, results, fields) {
+      if (err) {
+        console.error(`Error retrieving data from ${table}: ${err.message}`);
+      } else {
+        console.log(`Data from ${table}:`);
+        console.log(results);
+      }
+    });
+  });
