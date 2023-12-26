@@ -65,7 +65,7 @@ const promptUser = async () => {
 
 const viewAllDepartments = async () => {
   try {
-    const [rows, fields] = await promisePool.query('SELECT * FROM Departments');
+    const [rows, fields] = await promisePool.query('SELECT * FROM Departments WHERE id > 100');
     console.table(rows);
   } catch (error) {
     console.error('Error fetching departments:', error.message);
@@ -108,6 +108,7 @@ async function viewAllEmployees() {
     LEFT JOIN Roles r ON e.title_id = r.id
     LEFT JOIN Departments d ON e.department_id = d.id
     LEFT JOIN Employee m ON e.manager_id = m.id
+    WHERE e.id > 300
   `);
     console.table(rows);
   } catch (error) {
