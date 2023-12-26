@@ -73,6 +73,17 @@ const viewAllDepartments = async () => {
   // Prompt user again after displaying the table
   await promptUser();
 };
+
+const viewAllRoles = async () => {
+  try {
+    const [rows, fields] = await promisePool.query('SELECT * FROM Roles');
+    console.table(rows);
+  } catch (error) {
+    console.error('Error fetching departments:', error.message);
+  }
+  // Prompt user again after displaying the table
+  await promptUser();
+};
 // Initial call to start the application
 
 promptUser();
