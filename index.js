@@ -4,6 +4,7 @@ const promisePool = require("./config/connection");
 const mainChoices = [
   "View All Employees",
   "View Employees by Manager",
+  "View Employees by Department",
   "Add Employee",
   "Update Employee Role",
   "View All Roles",
@@ -29,9 +30,13 @@ const promptUser = async () => {
       await viewAllEmployees();
       break;
 
-      case "View Employees by Manager":
-        await viewEmployeebyManager();
-        break;
+    case "View Employees by Manager":
+      await viewEmployeebyManager();
+      break;
+
+    case "View Employees by Department":
+      await viewEmployeebyDepartment();
+      break;
 
     case "Add Employee":
       await addEmployee();
@@ -394,6 +399,43 @@ const viewEmployeebyManager = async () => {
     console.table(rows);
   } catch (error) {
     console.error('Error fetching employees by manager:', error.message);
+  } finally {
+    // Prompt user again or end the connection
+    promptUser();
+  }
+};
+
+const viewEmployeebyDepartment = async () => {
+  try {
+    // Fetch and display a list of departments
+    const [departments] = await promisePool.query('SELECT id, name FROM Departments');
+
+    // Prompt user to select a department
+    const departmentSelection = await inquirer.prompt({
+      type: 'list',
+      name: 'departmentId',
+      message: 'Select a department:',
+      choices: departments.map(department => ({ name: department.name, value: department.id })),
+    });
+
+    // Fetch and display employees with their roles and departments for the selected department
+    const [rows] = await promisePool.query(`
+      SELECT
+        e.id,
+        e.first_name,
+        e.last_name,
+        r.Title AS Role,
+        d.name AS Department,
+        e.salary
+      FROM Employee e
+      LEFT JOIN Roles r ON e.title_id = r.id
+      LEFT JOIN Departments d ON e.department_id = d.id
+      WHERE e.department_id = ?;
+    `, [departmentSelection.departmentId]);
+
+    console.table(rows);
+  } catch (error) {
+    console.error('Error fetching employees by department:', error.message);
   } finally {
     // Prompt user again or end the connection
     promptUser();
