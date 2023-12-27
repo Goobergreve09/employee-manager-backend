@@ -75,6 +75,8 @@ Special thanks for the knowledge and information to:
 
 * [MySQL CONCAT() W3Schools Documentation](https://www.w3schools.com/sql/func_mysql_concat.asp)
 
+* [ReadME Generator](https://github.com/Goobergreve09/read-me-generator)
+
 
 ## License
 
