@@ -88,8 +88,7 @@ const promptUser = async () => {
     case "Quit":
       console.log("Quitting...");
       process.exit();
-      break;
-
+      
     default:
       console.log("Invalid choice");
   }
@@ -102,7 +101,6 @@ const viewAllDepartments = async () => {
   } catch (error) {
     console.error("Error fetching departments:", error.message);
   }
-  // Prompt user again after displaying the table
   await promptUser();
 };
 
@@ -150,7 +148,6 @@ async function viewAllEmployees() {
 
 async function addEmployee() {
   try {
-    // Fetch roles and departments
     const [roles] = await promisePool.query("SELECT id, Title FROM Roles");
     const [departments] = await promisePool.query(
       "SELECT id, name FROM Departments"
@@ -228,7 +225,6 @@ async function addEmployee() {
   } catch (error) {
     console.error("Error adding employee:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 }
@@ -311,14 +307,12 @@ async function updateEmployeeRole() {
   } catch (error) {
     console.error("Error updating employee details:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 }
 
 async function addRole() {
   try {
-    // Fetch department list
     const [departments] = await promisePool.query(
       "SELECT id, name FROM Departments"
     );
@@ -360,7 +354,6 @@ async function addRole() {
   } catch (error) {
     console.error("Error adding new role:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 }
@@ -386,17 +379,14 @@ async function addDepartment() {
   } catch (error) {
     console.error("Error adding department:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 }
 
 const viewEmployeebyManager = async () => { // also the same as 'async function viewEmployeebyManager () {'
   try {
-    // Fetch and display a list of managers
     const [managers] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS manager_name FROM Employee WHERE manager_id IS NULL');
     
-    // Prompt user to select a manager
     const managerSelection = await inquirer.prompt({
       type: 'list',
       name: 'managerId',
@@ -429,10 +419,8 @@ const viewEmployeebyManager = async () => { // also the same as 'async function 
 
 const viewEmployeebyDepartment = async () => {
   try {
-    // Fetch and display a list of departments
     const [departments] = await promisePool.query('SELECT id, name FROM Departments');
 
-    // Prompt user to select a department
     const departmentSelection = await inquirer.prompt({
       type: 'list',
       name: 'departmentId',
@@ -465,17 +453,14 @@ const viewEmployeebyDepartment = async () => {
 
 const deleteEmployee = async () => {
   try {
-    // Fetch and display a list of employees
     const [employees] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS employee_name FROM Employee');
 
-    // Prompt user to select an employee to delete
     const employeeSelection = await inquirer.prompt({
       type: 'list',
       name: 'employeeId',
       message: `Select an employee to delete: ${mistakeYellow}`,
       choices: employees.map(employee => ({ name: employee.employee_name, value: employee.id })),
     });
-
     // Delete the selected employee from the database
     await promisePool.query('DELETE FROM Employee WHERE id = ?', [employeeSelection.employeeId]);
 
@@ -483,7 +468,6 @@ const deleteEmployee = async () => {
   } catch (error) {
     console.error('Error deleting employee:', error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 };
