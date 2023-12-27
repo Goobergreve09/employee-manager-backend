@@ -17,6 +17,7 @@ const mainChoices = [
   "View All Departments",
   "Add Department",
   "Delete Department",
+  "Total Utilized Budget by Department",
   "Quit",
 ];
 
@@ -78,6 +79,10 @@ const promptUser = async () => {
 
     case "Delete Department":
       await deleteDepartment();
+      break;
+
+    case "Total Utilized Budget by Department":
+      await viewTotalSalaryByDepartment();
       break;
 
     case "Quit":
@@ -524,6 +529,35 @@ const deleteDepartment = async () => {
   } catch (error) {
     console.error('Error deleting department:', error.message);
   } finally {
+    promptUser();
+  }
+};
+
+const viewTotalSalaryByDepartment = async () => {
+  try {
+    const [departments] = await promisePool.query('SELECT id, name FROM Departments');
+
+    const departmentChoice = await inquirer.prompt({
+      type: 'list',
+      name: 'departmentId',
+      message: 'Select a department:',
+      choices: departments.map(department => ({ name: department.name, value: department.id })),
+    });
+
+    // Fetch and display the total salary sum for the selected department
+    const [rows] = await promisePool.query(`
+      SELECT d.name AS Department, SUM(e.salary) AS TotalSalary
+      FROM Employee e
+      JOIN Departments d ON e.department_id = d.id
+      WHERE e.department_id = ?
+      GROUP BY e.department_id
+    `, [departmentChoice.departmentId]);
+
+    console.table(rows);
+  } catch (error) {
+    console.error('Error fetching total salary by department:', error.message);
+  } finally {
+    // Prompt user again or end the connection
     promptUser();
   }
 };
