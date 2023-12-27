@@ -26,7 +26,13 @@ const promptUser = async () => {
     {
       type: "list",
       name: "main",
-      message: `What would you like to do?`,
+      message: `
+      ________________________  
+      ((                    ))
+       )) EMPLOYEE MANAGER (( 
+      ((                    ))
+        -------------------- 
+      \nWhat would you like to do?\n\n`,
       choices: mainChoices,
     },
   ]);
