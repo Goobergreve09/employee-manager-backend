@@ -5,7 +5,7 @@
   
 ## Description
 
-This application was created and is used for backend development. This is an employee manager created with the mysql2 node package. It's an application designed for company's to view,update,and manage the employees through a database. It allows you to add,view, and delete roles, departments, and employees within a company. The application is used by the user through a series of prompts to be answered in the command line using nodes inquirer package. These answers directly effect the employee manager database.
+This application was created and is used for backend development. This is an employee manager created with the mysql2 node package. It's an application designed for company's to view,update,and manage the employees through a database. It allows you to add,view, adelete roles, departments, and employees within a company. The application is used by the user through a series of prompts to be answered in the command line using nodes inquirer package. These answers directly effect the employee manager database.
 
 My main motivation for this application was to create an application to allow a company, big or small, to manage employees easily. It's a much more simple way to see everything about your company  that you need regarding employees, right in front of your eyes.
   
