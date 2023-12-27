@@ -1,16 +1,22 @@
 const inquirer = require("inquirer");
 const promisePool = require("./config/connection");
 
+const mistake = "If you wish to exit the prompt, PUSH Ctrl + C to Exit."
+const mistakeYellow = `\x1b[33m${mistake}\x1b[0m`;
+
 const mainChoices = [
   "View All Employees",
   "View Employees by Manager",
   "View Employees by Department",
   "Add Employee",
   "Update Employee Role",
+  "Delete Employee",
   "View All Roles",
   "Add Role",
+  "Delete Role",
   "View All Departments",
   "Add Department",
+  "Delete Department",
   "Quit",
 ];
 
@@ -46,6 +52,10 @@ const promptUser = async () => {
       await updateEmployeeRole();
       break;
 
+    case "Delete Employee":
+      await deleteEmployee();
+      break;
+
     case "View All Roles":
       await viewAllRoles();
       break;
@@ -54,12 +64,20 @@ const promptUser = async () => {
       await addRole();
       break;
 
+    case "Delete Role":
+      await deleteRole();
+      break;
+
     case "View All Departments":
       await viewAllDepartments();
       break;
 
     case "Add Department":
       await addDepartment();
+      break;
+
+    case "Delete Department":
+      await deleteDepartment();
       break;
 
     case "Quit":
@@ -368,7 +386,7 @@ async function addDepartment() {
   }
 }
 
-const viewEmployeebyManager = async () => {
+const viewEmployeebyManager = async () => { // also the same as 'async function viewEmployeebyManager () {'
   try {
     // Fetch and display a list of managers
     const [managers] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS manager_name FROM Employee WHERE manager_id IS NULL');
@@ -400,7 +418,6 @@ const viewEmployeebyManager = async () => {
   } catch (error) {
     console.error('Error fetching employees by manager:', error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 };
@@ -437,12 +454,79 @@ const viewEmployeebyDepartment = async () => {
   } catch (error) {
     console.error('Error fetching employees by department:', error.message);
   } finally {
+    promptUser();
+  }
+};
+
+const deleteEmployee = async () => {
+  try {
+    // Fetch and display a list of employees
+    const [employees] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS employee_name FROM Employee');
+
+    // Prompt user to select an employee to delete
+    const employeeSelection = await inquirer.prompt({
+      type: 'list',
+      name: 'employeeId',
+      message: `Select an employee to delete: ${mistakeYellow}`,
+      choices: employees.map(employee => ({ name: employee.employee_name, value: employee.id })),
+    });
+
+    // Delete the selected employee from the database
+    await promisePool.query('DELETE FROM Employee WHERE id = ?', [employeeSelection.employeeId]);
+
+    console.log('Employee deleted successfully!');
+  } catch (error) {
+    console.error('Error deleting employee:', error.message);
+  } finally {
     // Prompt user again or end the connection
     promptUser();
   }
 };
 
+const deleteRole = async () => {
+  try {
+    // Fetch and display a list of roles
+    const [roles] = await promisePool.query('SELECT id, Title FROM Roles');
 
+    // Prompt user to select a role to delete
+    const roleSelection = await inquirer.prompt({
+      type: 'list',
+      name: 'roleId',
+      message: `Select a role to delete: ${mistakeYellow}`,
+      choices: roles.map(role => ({ name: role.Title, value: role.id })),
+    });
+
+    // Delete the selected role from the database
+    await promisePool.query('DELETE FROM Roles WHERE id = ?', [roleSelection.roleId]);
+
+    console.log('Role deleted successfully!');
+  } catch (error) {
+    console.error('Error deleting role:', error.message);
+  } finally {
+    // Prompt user again or end the connection
+    promptUser();
+  }
+};
+const deleteDepartment = async () => {
+  try {
+    const [departments] = await promisePool.query('SELECT id, name FROM Departments');
+
+    const departmentSelection = await inquirer.prompt({
+      type: 'list',
+      name: 'departmentId',
+      message: `Select a department to delete: ${mistakeYellow}`,
+      choices: departments.map(department => ({ name: department.name, value: department.id })),
+    });
+
+    await promisePool.query('DELETE FROM Departments WHERE id = ?', [departmentSelection.departmentId]);
+
+    console.log('Department deleted successfully!');
+  } catch (error) {
+    console.error('Error deleting department:', error.message);
+  } finally {
+    promptUser();
+  }
+};
 // Initial call to start the application
 
 promptUser();
