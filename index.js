@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const promisePool = require("./config/connection");
 
-const mistake = "If you wish to exit the prompt, PUSH Ctrl + C to Exit."
+const mistake = "If you wish to exit the prompt, PUSH Ctrl + C to Exit.";
 const mistakeYellow = `\x1b[33m${mistake}\x1b[0m`;
 
 const mainChoices = [
@@ -30,8 +30,8 @@ const promptUser = async () => {
       choices: mainChoices,
     },
   ]);
-//The switch method here is creating a series of clauses, when the answer is selected, then the function 
-//will be executed.
+  //The switch method here is creating a series of clauses, when the answer is selected, then the function
+  //will be executed.
   switch (answers.main) {
     case "View All Employees":
       await viewAllEmployees();
@@ -88,7 +88,7 @@ const promptUser = async () => {
     case "Quit":
       console.log("Quitting...");
       process.exit();
-      
+
     default:
       console.log("Invalid choice");
   }
@@ -174,7 +174,7 @@ async function addEmployee() {
         type: "list",
         name: "roleId",
         message: "Select employee's role:",
-        choices: roles.map((role) => ({ name: role.Title, value: role.id })), 
+        choices: roles.map((role) => ({ name: role.Title, value: role.id })),
         //name is set to the roles title and value is set to the roles ID
         //role is the placeholder being used for an element being sent back from the roles array
       },
@@ -383,19 +383,26 @@ async function addDepartment() {
   }
 }
 
-const viewEmployeebyManager = async () => { // also the same as 'async function viewEmployeebyManager () {'
+const viewEmployeebyManager = async () => {
+  // also the same as 'async function viewEmployeebyManager () {'
   try {
-    const [managers] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS manager_name FROM Employee WHERE manager_id IS NULL');
-    
+    const [managers] = await promisePool.query(
+      'SELECT id, CONCAT(first_name, " ", last_name) AS manager_name FROM Employee WHERE manager_id IS NULL'
+    );
+
     const managerSelection = await inquirer.prompt({
-      type: 'list',
-      name: 'managerId',
-      message: 'Select a manager:',
-      choices: managers.map(manager => ({ name: manager.manager_name, value: manager.id })),
+      type: "list",
+      name: "managerId",
+      message: "Select a manager:",
+      choices: managers.map((manager) => ({
+        name: manager.manager_name,
+        value: manager.id,
+      })),
     });
 
     // Fetch and display employees with their roles and departments for the selected manager
-    const [rows] = await promisePool.query(`
+    const [rows] = await promisePool.query(
+      `
       SELECT
         e.id,
         e.first_name,
@@ -407,11 +414,13 @@ const viewEmployeebyManager = async () => { // also the same as 'async function 
       LEFT JOIN Roles r ON e.title_id = r.id
       LEFT JOIN Departments d ON e.department_id = d.id
       WHERE e.manager_id = ?;
-    `, [managerSelection.managerId]);
+    `,
+      [managerSelection.managerId]
+    );
 
     console.table(rows);
   } catch (error) {
-    console.error('Error fetching employees by manager:', error.message);
+    console.error("Error fetching employees by manager:", error.message);
   } finally {
     promptUser();
   }
@@ -419,17 +428,23 @@ const viewEmployeebyManager = async () => { // also the same as 'async function 
 
 const viewEmployeebyDepartment = async () => {
   try {
-    const [departments] = await promisePool.query('SELECT id, name FROM Departments');
+    const [departments] = await promisePool.query(
+      "SELECT id, name FROM Departments"
+    );
 
     const departmentSelection = await inquirer.prompt({
-      type: 'list',
-      name: 'departmentId',
-      message: 'Select a department:',
-      choices: departments.map(department => ({ name: department.name, value: department.id })),
+      type: "list",
+      name: "departmentId",
+      message: "Select a department:",
+      choices: departments.map((department) => ({
+        name: department.name,
+        value: department.id,
+      })),
     });
 
     // Fetch and display employees with their roles and departments for the selected department
-    const [rows] = await promisePool.query(`
+    const [rows] = await promisePool.query(
+      `
       SELECT
         e.id,
         e.first_name,
@@ -441,11 +456,13 @@ const viewEmployeebyDepartment = async () => {
       LEFT JOIN Roles r ON e.title_id = r.id
       LEFT JOIN Departments d ON e.department_id = d.id
       WHERE e.department_id = ?;
-    `, [departmentSelection.departmentId]);
+    `,
+      [departmentSelection.departmentId]
+    );
 
     console.table(rows);
   } catch (error) {
-    console.error('Error fetching employees by department:', error.message);
+    console.error("Error fetching employees by department:", error.message);
   } finally {
     promptUser();
   }
@@ -453,20 +470,27 @@ const viewEmployeebyDepartment = async () => {
 
 const deleteEmployee = async () => {
   try {
-    const [employees] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS employee_name FROM Employee');
+    const [employees] = await promisePool.query(
+      'SELECT id, CONCAT(first_name, " ", last_name) AS employee_name FROM Employee'
+    );
 
     const employeeSelection = await inquirer.prompt({
-      type: 'list',
-      name: 'employeeId',
+      type: "list",
+      name: "employeeId",
       message: `Select an employee to delete: ${mistakeYellow}`,
-      choices: employees.map(employee => ({ name: employee.employee_name, value: employee.id })),
+      choices: employees.map((employee) => ({
+        name: employee.employee_name,
+        value: employee.id,
+      })),
     });
     // Delete the selected employee from the database
-    await promisePool.query('DELETE FROM Employee WHERE id = ?', [employeeSelection.employeeId]);
+    await promisePool.query("DELETE FROM Employee WHERE id = ?", [
+      employeeSelection.employeeId,
+    ]);
 
-    console.log('Employee deleted successfully!');
+    console.log("Employee deleted successfully!");
   } catch (error) {
-    console.error('Error deleting employee:', error.message);
+    console.error("Error deleting employee:", error.message);
   } finally {
     promptUser();
   }
@@ -475,22 +499,24 @@ const deleteEmployee = async () => {
 const deleteRole = async () => {
   try {
     // Fetch and display a list of roles
-    const [roles] = await promisePool.query('SELECT id, Title FROM Roles');
+    const [roles] = await promisePool.query("SELECT id, Title FROM Roles");
 
     // Prompt user to select a role to delete
     const roleSelection = await inquirer.prompt({
-      type: 'list',
-      name: 'roleId',
+      type: "list",
+      name: "roleId",
       message: `Select a role to delete: ${mistakeYellow}`,
-      choices: roles.map(role => ({ name: role.Title, value: role.id })),
+      choices: roles.map((role) => ({ name: role.Title, value: role.id })),
     });
 
     // Delete the selected role from the database
-    await promisePool.query('DELETE FROM Roles WHERE id = ?', [roleSelection.roleId]);
+    await promisePool.query("DELETE FROM Roles WHERE id = ?", [
+      roleSelection.roleId,
+    ]);
 
-    console.log('Role deleted successfully!');
+    console.log("Role deleted successfully!");
   } catch (error) {
-    console.error('Error deleting role:', error.message);
+    console.error("Error deleting role:", error.message);
   } finally {
     // Prompt user again or end the connection
     promptUser();
@@ -498,20 +524,27 @@ const deleteRole = async () => {
 };
 const deleteDepartment = async () => {
   try {
-    const [departments] = await promisePool.query('SELECT id, name FROM Departments');
+    const [departments] = await promisePool.query(
+      "SELECT id, name FROM Departments"
+    );
 
     const departmentSelection = await inquirer.prompt({
-      type: 'list',
-      name: 'departmentId',
+      type: "list",
+      name: "departmentId",
       message: `Select a department to delete: ${mistakeYellow}`,
-      choices: departments.map(department => ({ name: department.name, value: department.id })),
+      choices: departments.map((department) => ({
+        name: department.name,
+        value: department.id,
+      })),
     });
 
-    await promisePool.query('DELETE FROM Departments WHERE id = ?', [departmentSelection.departmentId]);
+    await promisePool.query("DELETE FROM Departments WHERE id = ?", [
+      departmentSelection.departmentId,
+    ]);
 
-    console.log('Department deleted successfully!');
+    console.log("Department deleted successfully!");
   } catch (error) {
-    console.error('Error deleting department:', error.message);
+    console.error("Error deleting department:", error.message);
   } finally {
     promptUser();
   }
@@ -519,27 +552,35 @@ const deleteDepartment = async () => {
 
 const viewTotalSalaryByDepartment = async () => {
   try {
-    const [departments] = await promisePool.query('SELECT id, name FROM Departments');
+    const [departments] = await promisePool.query(
+      "SELECT id, name FROM Departments"
+    );
 
     const departmentChoice = await inquirer.prompt({
-      type: 'list',
-      name: 'departmentId',
-      message: 'Select a department:',
-      choices: departments.map(department => ({ name: department.name, value: department.id })),
+      type: "list",
+      name: "departmentId",
+      message: "Select a department:",
+      choices: departments.map((department) => ({
+        name: department.name,
+        value: department.id,
+      })),
     });
 
     // Fetch and display the total salary sum for the selected department
-    const [rows] = await promisePool.query(`
+    const [rows] = await promisePool.query(
+      `
       SELECT d.name AS Department, SUM(e.salary) AS TotalSalary
       FROM Employee e
       JOIN Departments d ON e.department_id = d.id
       WHERE e.department_id = ?
       GROUP BY e.department_id
-    `, [departmentChoice.departmentId]);
+    `,
+      [departmentChoice.departmentId]
+    );
 
     console.table(rows);
   } catch (error) {
-    console.error('Error fetching total salary by department:', error.message);
+    console.error("Error fetching total salary by department:", error.message);
   } finally {
     // Prompt user again or end the connection
     promptUser();
