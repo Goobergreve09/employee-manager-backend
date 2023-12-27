@@ -1,4 +1,4 @@
-# Employee Manager with mySQL
+# Employee Manager with MySQL
 
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
