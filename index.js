@@ -510,10 +510,9 @@ const deleteEmployee = async () => {
 
 const deleteRole = async () => {
   try {
-    // Fetch and display a list of roles
+
     const [roles] = await promisePool.query("SELECT id, Title FROM Roles");
 
-    // Prompt user to select a role to delete
     const roleSelection = await inquirer.prompt({
       type: "list",
       name: "roleId",
@@ -530,7 +529,6 @@ const deleteRole = async () => {
   } catch (error) {
     console.error("Error deleting role:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 };
