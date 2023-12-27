@@ -489,6 +489,12 @@ const deleteEmployee = async () => {
         value: employee.id,
       })),
     });
+
+    // Set manager_id to NULL for employees who have the selected employee as their manager
+    await promisePool.query("UPDATE Employee SET manager_id = NULL WHERE manager_id = ?", [
+      employeeSelection.employeeId,
+    ]);
+
     // Delete the selected employee from the database
     await promisePool.query("DELETE FROM Employee WHERE id = ?", [
       employeeSelection.employeeId,
