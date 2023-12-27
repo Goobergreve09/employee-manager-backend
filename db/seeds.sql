@@ -1,28 +1,28 @@
-INSERT INTO Departments (id, name)
+INSERT INTO Departments (name)
 VALUES
-  (101, 'Sales'),
-  (102, 'Finance'),
-  (103, 'Legal'),
-  (104, 'Engineering');
+  ('Sales'),
+  ('Finance'),
+  ( 'Legal'),
+  ( 'Engineering');
 
-INSERT INTO Roles (id, Title, department_id, Salary)
+INSERT INTO Roles (Title, department_id, Salary)
 VALUES
-  (201, 'Sales Lead', 101, 100000),
-  (202, 'Salesperson', 101, 80000),
-  (203, 'Lead Engineer', 104, 150000),
-  (204, 'Software Engineer', 104, 120000),
-  (205, 'Account Manager', 102, 160000),
-  (206, 'Accountant', 102, 125000),
-  (207, 'Legal Team Lead', 103, 250000),
-  (208, 'Lawyer', 103, 190000);
+  ('Sales Lead', 1, 100000),
+  ('Salesperson', 1, 80000),
+  ('Lead Engineer', 4, 150000),
+  ('Software Engineer', 4, 120000),
+  ('Account Manager', 2, 160000),
+  ('Accountant', 2, 125000),
+  ('Legal Team Lead', 3, 250000),
+  ('Lawyer', 3, 190000);
 
-INSERT INTO Employee (id, first_name, last_name, title_id, department_id, salary, manager_id)
+INSERT INTO Employee (first_name, last_name, salary, manager_id)
 VALUES
-  (301, 'John', 'Doe', 201, 101, 100000, NULL),
-  (302, 'Mike', 'Chan', 202, 101, 80000, 301),
-  (303, 'Ashley', 'Rodriguez', 203, 104, 150000, NULL),
-  (304, 'Kevin', 'Tupik', 204, 104, 120000, 303),
-  (305, 'Kunal', 'Singh', 205, 102, 160000, NULL),
-  (306, 'Malia', 'Brown', 206, 102, 125000, 305),
-  (307, 'Sarah', 'Lourd', 207, 103, 250000, NULL),
-  (308, 'Tom', 'Allen', 208, 103, 190000, 307);
+  ('John', 'Doe',  100000, NULL),
+  ('Mike', 'Chan',  80000, 1),
+  ('Ashley', 'Rodriguez', 150000, NULL),
+  ('Kevin', 'Tupik', 120000, 3),
+  ('Kunal', 'Singh', 160000, NULL),
+  ('Malia', 'Brown', 125000, 5),
+  ('Sarah', 'Lourd', 250000, NULL),
+  ('Tom', 'Allen',  190000, 7);

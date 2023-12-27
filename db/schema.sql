@@ -4,20 +4,20 @@ CREATE DATABASE employee_manager_db;
 USE employee_manager_db;
 
 CREATE TABLE Departments (
-  id INT PRIMARY KEY,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Roles (
-  id INT PRIMARY KEY,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   Title VARCHAR(30) NOT NULL,
   department_id INT,
-  Salary INT NOT NULL,
+  Salary INT NOT NULL DEFAULT 40000,
   FOREIGN KEY (department_id) REFERENCES Departments(id)
 );
 
 CREATE TABLE Employee (
-  id INT PRIMARY KEY,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   title_id INT,
