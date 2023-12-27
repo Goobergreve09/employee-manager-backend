@@ -3,6 +3,7 @@ const promisePool = require("./config/connection");
 
 const mainChoices = [
   "View All Employees",
+  "View Employees by Manager",
   "Add Employee",
   "Update Employee Role",
   "View All Roles",
@@ -21,11 +22,16 @@ const promptUser = async () => {
       choices: mainChoices,
     },
   ]);
-
+//The switch method here is creating a series of clauses, when the answer is selected, then the function 
+//will be executed.
   switch (answers.main) {
     case "View All Employees":
       await viewAllEmployees();
       break;
+
+      case "View Employees by Manager":
+        await viewEmployeebyManager();
+        break;
 
     case "Add Employee":
       await addEmployee();
@@ -84,7 +90,6 @@ async function viewAllRoles() {
   } catch (error) {
     console.error("Error fetching roles:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 }
@@ -111,7 +116,6 @@ async function viewAllEmployees() {
   } catch (error) {
     console.error("Error fetching employees:", error.message);
   } finally {
-    // Prompt user again or end the connection
     promptUser();
   }
 }
@@ -127,8 +131,9 @@ async function addEmployee() {
       'SELECT id, CONCAT(first_name, " ", last_name) AS manager_name FROM Employee WHERE manager_id IS NULL'
     );
     managers.unshift({ id: null, manager_name: "No Manager" });
+    //unshift is adding "No Manager" to the front of the managers array with an id of null
 
-    // Prompt user for employee details
+    // Prompt user for employee information
     const employeeData = await inquirer.prompt([
       {
         type: "input",
@@ -144,7 +149,9 @@ async function addEmployee() {
         type: "list",
         name: "roleId",
         message: "Select employee's role:",
-        choices: roles.map((role) => ({ name: role.Title, value: role.id })),
+        choices: roles.map((role) => ({ name: role.Title, value: role.id })), 
+        //name is set to the roles title and value is set to the roles ID
+        //role is the placeholder being used for an element being sent back from the roles array
       },
       {
         type: "list",
@@ -355,6 +362,44 @@ async function addDepartment() {
     promptUser();
   }
 }
+
+const viewEmployeebyManager = async () => {
+  try {
+    // Fetch and display a list of managers
+    const [managers] = await promisePool.query('SELECT id, CONCAT(first_name, " ", last_name) AS manager_name FROM Employee WHERE manager_id IS NULL');
+    
+    // Prompt user to select a manager
+    const managerSelection = await inquirer.prompt({
+      type: 'list',
+      name: 'managerId',
+      message: 'Select a manager:',
+      choices: managers.map(manager => ({ name: manager.manager_name, value: manager.id })),
+    });
+
+    // Fetch and display employees with their roles and departments for the selected manager
+    const [rows] = await promisePool.query(`
+      SELECT
+        e.id,
+        e.first_name,
+        e.last_name,
+        r.Title AS Role,
+        d.name AS Department,
+        e.salary
+      FROM Employee e
+      LEFT JOIN Roles r ON e.title_id = r.id
+      LEFT JOIN Departments d ON e.department_id = d.id
+      WHERE e.manager_id = ?;
+    `, [managerSelection.managerId]);
+
+    console.table(rows);
+  } catch (error) {
+    console.error('Error fetching employees by manager:', error.message);
+  } finally {
+    // Prompt user again or end the connection
+    promptUser();
+  }
+};
+
 
 // Initial call to start the application
 
