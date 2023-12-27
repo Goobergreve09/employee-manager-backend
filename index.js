@@ -55,7 +55,7 @@ const promptUser = async () => {
 
     case "Quit":
       console.log("Quitting...");
-      // You may want to close the connection here if necessary
+      process.exit();
       break;
 
     default:
@@ -276,6 +276,30 @@ async function addRole() {
     promptUser();
   }
 }
+
+async function addDepartment() {
+  try {
+    // Prompt user for new department details
+    const departmentData = await inquirer.prompt([
+      {
+        type: "input",
+        name: "departmentName",
+        message: "Enter the new department name:",
+      },
+    ]);
+
+    // Insert the new department into the database
+    const [result] = await promisePool.query('INSERT INTO Departments (name) VALUES (?)', [departmentData.departmentName]);
+
+    console.log('Department added successfully!');
+  } catch (error) {
+    console.error('Error adding department:', error.message);
+  } finally {
+    // Prompt user again or end the connection
+    promptUser();
+  }
+}
+
 // Initial call to start the application
 
 promptUser();
